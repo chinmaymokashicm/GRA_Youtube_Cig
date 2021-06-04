@@ -1,0 +1,4 @@
+__pycache__/
+*.json
+search_results/
+variables.yaml

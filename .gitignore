@@ -2,3 +2,6 @@ __pycache__/
 *.json
 search_results/
 variables.yaml
+test_additional_code.py
+generated_tables/
+logs/

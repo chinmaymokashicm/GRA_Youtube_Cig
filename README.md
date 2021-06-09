@@ -14,5 +14,5 @@ These variables must be present:
 - dir_search_results
 - youtube_api_name
 - youtube_version
-- search_results_separator
-- search_results_whitespace_substitute
+- save_file_results_separator
+- save_file_whitespace_substitute

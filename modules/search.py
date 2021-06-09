@@ -72,23 +72,8 @@ class Search(Data):
             search_query (str): Search query
         """
         now_utc = datetime.now(timezone.utc)
-        filename = self.search_results_whitespace_substitute.join(search_query.split()) + self.search_results_separator + str(now_utc)
+        filename = self.save_file_whitespace_substitute.join(search_query.split()) + self.save_file_results_separator + str(now_utc) + self.save_file_results_separator + "search"
         return(filename)
-
-    def generate_url(self, kind, kind_ID):
-        """Generates URL to the video, channel (or other valid entity)
-
-        Args:
-            kind (str): Kind of video. Found in search results
-            kind_ID (str): ID of the entity. Found in search results
-        """
-        if("video" in kind):
-            url = "https://youtube.com/watch?v={}".format(kind_ID)
-        elif("channel" in kind):
-            url = "https://youtube.com/channel/{}".format(kind_ID)
-        else:
-            url = None
-        return(url)
 
     def convert_search_results_to_table(self, path_json_file, is_file=True, save=False, search_query=None, path_directory=None):
         """Returns search results as pandas table
@@ -97,7 +82,7 @@ class Search(Data):
             path_json_file (str): Path to JSON file. If "is_file" is False consider this as a dictionary variable
             is_file (bool, optional): Whether "path_json_file" is path to a file or a dictionary variable. Defaults to True.
             save (bool, optional): Save the table as CSV. Defaults to False.
-            search_query (str): Valif if "is_file" is False.
+            search_query (str): Valid if "is_file" is False.
             path_directory (str): Path of the directory. Valid if "save" is True. Defaults to None
         """
         if(path_directory is None):
@@ -110,7 +95,7 @@ class Search(Data):
         else:
             with open(path_json_file) as file:
                 dict_results = json.load(file)
-            search_query = "\s".join(os.path.basename(path_json_file).split(self.search_results_separator)[0].split(self.search_results_whitespace_substitute))
+            search_query = "\s".join(os.path.basename(path_json_file).split(self.save_file_results_separator)[0].split(self.save_file_whitespace_substitute))
             print(search_query)
         list_rows = []
         for dict_item in dict_results["items"]:

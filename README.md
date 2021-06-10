@@ -10,7 +10,7 @@ This project is to pull Youtube data, organize and analyze Youtube search data a
 For the code to work, create a variables.yaml file in the root directory.
 These variables must be present:
 - api_key
-- dir_search_results
+- dir_results
 - youtube_api_name
 - youtube_version
 - save_file_results_separator

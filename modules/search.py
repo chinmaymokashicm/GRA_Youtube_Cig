@@ -38,7 +38,8 @@ class Search(Data):
         
         # Save the results if "save" is True
         if(save):
-            self.save_search(query, dict_response)
+            # self.save_search(query, dict_response)
+            self.save_json(dict_json=dict_response, filename=self.generate_filename(id=query, suffix="search"))
 
         # Convert it to a table if "return_table" is True and return
         if(return_table):
@@ -46,34 +47,6 @@ class Search(Data):
             return(df)
 
         return(dict_response)
-
-    def save_search(self, search_query, dict_search_results, path_directory=None):
-        """Saves search search results as JSON file
-
-        Args:
-            search_query (str): Search query
-            dict_search_results (dict): Search results
-            path_directory (str): Path of the directory
-        """
-        if(path_directory is None):
-            path_directory = self.dir_search_results
-        try:
-            with open(os.path.join(path_directory, self.generate_search_results_filename(search_query)) + ".json", "w") as file:
-                json.dump(dict_search_results, file)
-                return(True)
-        except Exception as e:
-            print(e)
-            return(False)
-
-    def generate_search_results_filename(self, search_query, *args):
-        """Generates filename for the JSON file
-
-        Args:
-            search_query (str): Search query
-        """
-        now_utc = datetime.now(timezone.utc)
-        filename = self.save_file_whitespace_substitute.join(search_query.split()) + self.save_file_results_separator + str(now_utc) + self.save_file_results_separator + "search"
-        return(filename)
 
     def convert_search_results_to_table(self, path_json_file, is_file=True, save=False, search_query=None, path_directory=None):
         """Returns search results as pandas table
@@ -86,7 +59,7 @@ class Search(Data):
             path_directory (str): Path of the directory. Valid if "save" is True. Defaults to None
         """
         if(path_directory is None):
-            path_directory = self.dir_search_results
+            path_directory = self.dir_results
 
         if(not is_file):
             dict_results = path_json_file
@@ -127,7 +100,7 @@ class Search(Data):
         df = pd.DataFrame(list_rows)
         # Save the dataframe as CSV if "save" is True
         if(save):
-            path_csv = os.path.join(path_directory, self.generate_search_results_filename(search_query)) + ".csv"
+            path_csv = os.path.join(path_directory, self.generate_filename(id=search_query, suffix="search")) + ".csv"
             df.to_csv(path_csv, index=False, quoting=csv.QUOTE_ALL)
         return(df)
 

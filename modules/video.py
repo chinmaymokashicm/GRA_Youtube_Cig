@@ -2,6 +2,7 @@
 Class for Youtube video related methods and variables.
 Inherits from Data Class.
 """
+from http.client import responses
 from .data import Data
 
 from datetime import datetime,timezone
@@ -14,6 +15,43 @@ class Video(Data):
     def __init__(self):
         super().__init__()
     
+    def get_video_info(self, video_ID, return_table=False, save=True, all_info=False):
+        """Gets JSON showing video information
+
+        Args:
+            video_ID (str): video_ID
+            return_table (bool, optional): Whether to generate a table. Defaults to False.
+            save (bool, optional): Whether to save the JSON. Defaults to True.
+        """
+        request = self.youtube_obj.videos().list(
+            part="snippet,contentDetails,statistics",
+            id=video_ID
+        )
+        dict_results = request.execute()
+        if(not all_info):
+            try:
+                dict_item = dict_results["items"][0]
+                dict_results = {
+                    "video_ID": video_ID,
+                    "publish_time": dict_item["snippet"]["publishedAt"],
+                    "channel_ID": dict_item["snippet"]["channelId"],
+                    "title": dict_item["snippet"]["title"],
+                    "description": dict_item["snippet"]["description"],
+                    "channel_title": dict_item["snippet"]["channelTitle"],
+                    "duration": dict_item["contentDetails"]["duration"],
+                    "view_count": dict_item["statistics"]["viewCount"],
+                    "like_count": dict_item["statistics"]["likeCount"],
+                    "dislike_count": dict_item["statistics"]["dislikeCount"],
+                    "favorite_count": dict_item["statistics"]["favoriteCount"],
+                    "comment_count": dict_item["statistics"]["commentCount"] if "commentCount" in dict_item["statistics"] else None
+                }
+            except Exception as e:
+                print(e)
+                print("Could not retrieve specific information for video_ID {}. Returning entire JSON.".format(video_ID))
+        if(save):
+            self.save_json(dict_json=dict_results, filename=self.generate_filename(id=video_ID, suffix="video_info"))
+        return(dict_results)
+
     def get_comment_threads_to_video(self, video_ID, return_table=False, save=True, *args, **kwargs):
         """Get comments threads to the given video
 
@@ -29,41 +67,14 @@ class Video(Data):
         )
         response = request.execute()
         if(save):
-            self.save_comment_threads(video_ID=video_ID, dict_comments_thread=response)
+            # self.save_comment_threads(video_ID=video_ID, dict_comments_thread=response)
+            self.save_json(dict_json=response, filename=self.generate_filename(id=video_ID, suffix="comments_thread"))
 
         if(return_table):
             df = self.convert_comment_thread_to_table(path_json_file=response, is_file=False, save=True, video_ID=video_ID)
             return(df)
 
         return(response)
-    
-    def save_comment_threads(self, video_ID, dict_comments_thread, path_directory=None):
-        """[summary]
-
-        Args:
-            video_ID (str): Video ID
-            dict_comments_thread (dict): Comments thread
-            path_directory (str, optional): Path of the directory. Defaults to None.
-        """
-        if(path_directory is None):
-            path_directory = self.dir_search_results
-        try:
-            with open(os.path.join(path_directory, self.generate_comments_thread_filename(video_ID)) + ".json", "w") as file:
-                json.dump(dict_comments_thread, file)
-                return(True)
-        except Exception as e:
-            print(e)
-            return(False)
-
-    def generate_comments_thread_filename(self, video_ID):
-        """Generates filename for the JSON file
-
-        Args:
-            video_ID (str): Search query
-        """
-        now_utc = datetime.now(timezone.utc)
-        filename = self.save_file_whitespace_substitute.join(video_ID.split()) + self.save_file_results_separator + str(now_utc) + self.save_file_results_separator + "comments_thread"
-        return(filename)
 
     def convert_comment_thread_to_table(self, path_json_file, is_file=True, save=False, video_ID=None, path_directory=None):
         """Converts comment thread JSON to a pandas dataframe
@@ -76,10 +87,7 @@ class Video(Data):
             path_directory (str): Path of the directory. Valid if "save" is True. Defaults to None.
         """
         if(path_directory is None):
-            path_directory = self.dir_search_results
-
-        if(path_directory is None):
-            path_directory = self.dir_search_results
+            path_directory = self.dir_results
 
         if(not is_file):
             dict_results = path_json_file
@@ -136,7 +144,7 @@ class Video(Data):
         df = pd.DataFrame(list_rows)
         # Save the dataframe as CSV if "save" is True
         if(save):
-            path_csv = os.path.join(path_directory, self.generate_comments_thread_filename(video_ID)) + ".csv"
+            path_csv = os.path.join(path_directory, self.generate_filename(id=video_ID, suffix="comments_thread")) + ".csv"
             df.to_csv(path_csv, index=False, quoting=csv.QUOTE_ALL)
         return(df)
 

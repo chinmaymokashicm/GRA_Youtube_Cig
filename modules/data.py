@@ -35,7 +35,7 @@ class Data:
         """Generates URL to the video, channel (or other valid entity)
 
         Args:
-            kind (str): Kind of video. Found in search results
+            kind (str): Kind of item. Found in search results
             kind_ID (str): ID of the entity. Found in search results
         """
         if("video" in kind):

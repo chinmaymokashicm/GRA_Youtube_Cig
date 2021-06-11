@@ -15,12 +15,11 @@ class Video(Data):
     def __init__(self):
         super().__init__()
     
-    def get_video_info(self, video_ID, return_table=False, save=True, all_info=False):
+    def get_video_info(self, video_ID, save=True, all_info=False):
         """Gets JSON showing video information
 
         Args:
             video_ID (str): video_ID
-            return_table (bool, optional): Whether to generate a table. Defaults to False.
             save (bool, optional): Whether to save the JSON. Defaults to True.
         """
         request = self.youtube_obj.videos().list(
@@ -32,18 +31,17 @@ class Video(Data):
             try:
                 dict_item = dict_results["items"][0]
                 dict_results = {
-                    "video_ID": video_ID,
-                    "publish_time": dict_item["snippet"]["publishedAt"],
-                    "channel_ID": dict_item["snippet"]["channelId"],
-                    "title": dict_item["snippet"]["title"],
-                    "description": dict_item["snippet"]["description"],
-                    "channel_title": dict_item["snippet"]["channelTitle"],
-                    "duration": dict_item["contentDetails"]["duration"],
+                    "video_url": self.generate_url(kind="video", kind_ID=video_ID),
+                    "video_title": dict_item["snippet"]["title"],
+                    "video_description": dict_item["snippet"]["description"],
                     "view_count": dict_item["statistics"]["viewCount"],
-                    "like_count": dict_item["statistics"]["likeCount"],
-                    "dislike_count": dict_item["statistics"]["dislikeCount"],
+                    "like_count": dict_item["statistics"]["likeCount"] if "likeCount" in dict_item["statistics"] else -1,
+                    "dislike_count": dict_item["statistics"]["dislikeCount"] if "dislikeCount" in dict_item["statistics"] else -1,
                     "favorite_count": dict_item["statistics"]["favoriteCount"],
-                    "comment_count": dict_item["statistics"]["commentCount"] if "commentCount" in dict_item["statistics"] else None
+                    "comment_count": dict_item["statistics"]["commentCount"] if "commentCount" in dict_item["statistics"] else -1,
+                    "channel_url": self.generate_url(kind="channel", kind_ID=dict_item["snippet"]["channelId"]),
+                    "publish_time": dict_item["snippet"]["publishedAt"],
+                    "video_duration": dict_item["contentDetails"]["duration"]
                 }
             except Exception as e:
                 print(e)
@@ -71,7 +69,7 @@ class Video(Data):
             self.save_json(dict_json=response, filename=self.generate_filename(id=video_ID, suffix="comments_thread"))
 
         if(return_table):
-            df = self.convert_comment_thread_to_table(path_json_file=response, is_file=False, save=True, video_ID=video_ID)
+            df = self.convert_comment_thread_to_table(path_json_file=response, is_file=False, save=True if save else False, video_ID=video_ID)
             return(df)
 
         return(response)

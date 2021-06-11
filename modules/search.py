@@ -69,7 +69,7 @@ class Search(Data):
             with open(path_json_file) as file:
                 dict_results = json.load(file)
             search_query = "\s".join(os.path.basename(path_json_file).split(self.save_file_results_separator)[0].split(self.save_file_whitespace_substitute))
-            print(search_query)
+            # print(search_query)
         list_rows = []
         for dict_item in dict_results["items"]:
             dict_row = {

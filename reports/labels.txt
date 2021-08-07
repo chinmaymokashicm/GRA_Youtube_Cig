@@ -1,0 +1,25 @@
+Category - This label divides the dataset into whether a video promotes/supports or discourages vaping
+1. Protective
+The video discourages vaping.
+2. Risky
+The video encourages or promotes vaping.
+3. Neutral
+The video does not have a clear stance on vaping.
+
+Theme - Basic theme of a video
+1. Vaping tricks
+The video features vaping tricks.
+2. Marketing
+The video is selling or endorsing a product.
+3. Harmful health consequences
+The video talks about the harm vaping can cause.
+4. Promotion/Celebration
+The video promoting vaping and does not fall into any other theme.
+5. Comparative health effects with smoking
+The video compares vaping with smoking.
+6. News report
+The video consists of a news report related to vaping.
+7. N.A.
+The video does not fall into any other theme category.
+
+Misleading news - Binary (Yes or No)

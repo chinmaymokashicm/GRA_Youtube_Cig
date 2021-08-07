@@ -6,6 +6,7 @@ import json
 import os.path
 from googleapiclient.discovery import build
 from datetime import datetime,timezone
+import pandas as pd
 
 class Data:
     def __init__(self):
@@ -63,6 +64,29 @@ class Data:
         except Exception as e:
             print(e)
             return(False)
+    
+    def generate_id_lookup(self, df, unique_column, len_identifier, rename_to="id"):
+        """Generate lookup IDs for the dataframe
+
+        Args:
+            df (pandas.DataFrame): dataframe
+            unique_column (str): column with unique values
+            len_identifier (str): length of the identifier
+            rename_to (str): Rename the new column to this. Defaults to "id"
+        """
+        df = df[[unique_column]]
+        df = df.drop_duplicates(subset=[unique_column])
+        df = df.sort_values([unique_column])
+        df_id_numbered = df[[unique_column]].reset_index()
+        df_id_numbered.loc[:, "str_id"] = ""
+        for index, row in df_id_numbered.iterrows():
+            str_index = str(row["index"])
+            # str_id = (len_identifier - len(str(row["index"]))) * "0" + str(row["index"])
+            str_id = (len_identifier - len(str_index)) * "0" + str_index
+            df_id_numbered.loc[index, "str_id"] = str_id
+        df_id_numbered = df_id_numbered.drop(["index"], axis=1)
+        df_id_numbered = df_id_numbered.rename(columns={"str_id": rename_to})
+        return(df_id_numbered)
 
 if(__name__=="__main__"):
     Data()

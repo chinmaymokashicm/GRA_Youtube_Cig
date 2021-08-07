@@ -6,3 +6,4 @@ test_additional_code.py
 generated_tables/
 logs/
 test.py
+.ipynb_checkpoints/

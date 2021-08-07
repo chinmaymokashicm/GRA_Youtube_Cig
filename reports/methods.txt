@@ -1,0 +1,43 @@
+vaping pot
+health experts saying vaping better than smoking if you are already a smoker
+police
+
+
+tag videos for unverified claims
+
+
+research more about the topic
+
+https://www.kaggle.com/dskswu/topic-modeling-bert-lda
+
+https://dl.acm.org/doi/abs/10.1145/3201064.3201086
+
+https://www.researchgate.net/publication/325211215_Early_Public_Responses_to_the_Zika-Virus_on_YouTube_Prevalence_of_and_Differences_Between_Conspiracy_Theory_and_Informational_Videos
+
+
+cluster video titles (topic modeling) and see how my labeling went
+
+
+
+Methods
+> Using Google trends, finalized on five search terms related to vaping - "vaping", "electronic cigarette", "vape tricks", "vaping vs smoking" and "vape pen"
+> Ran the Youtube Data API (06/23/2021 4:30 pm) and retrieved 100 video results for each category.
+> 500 videos were reduced to 451 after duplicates were removed.
+> Video information and comment threads for each video (100 for each) were retrieved.
+> Videos were manually categorized into 2 labels - category ("Protective", "Risky", "Neutral") and theme ("Vaping tricks", "Marketing", "Harmful health consequences", "Promotion/Celebration", "Comparative health effects with smoking").
+
+I also ran LDA on video data (title + description) for topic modeling, however, could not get conclusive results.
+
+
+
+
+Video id: five digit unique identifier
+Thread id: Six digit unique identifier
+User id: Eight unique identifier
+comment id: Siven digit unique identfier
+File 1: video id, link to the video
+File 2: video id, thread id, comment id, user id
+File 3: comment id, likes, dislikes, metadata
+File 1 can have accessory data.
+Data harvesting core
+Labeling core: video id, labels, summary stats

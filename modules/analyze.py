@@ -26,7 +26,10 @@ class Analyze:
                 return(False)
         if(dislikes == 0):
             dislikes = 1
-        return(likes/dislikes * multiplier)
+        if(all(metric >= 0 for metric in [likes, dislikes])):
+            return(likes/dislikes * multiplier)
+        else:
+            return(0)
     
     def dislikes_to_likes(self, dislikes, likes, multiplier=1000):
         """Dislikes to likes ratio for a video
@@ -45,8 +48,35 @@ class Analyze:
                 return(False)
         if(likes == 0):
             likes = 1
-        return(dislikes/likes * multiplier)
+        if(all(metric >= 0 for metric in [likes, dislikes])):
+            return(dislikes/likes * multiplier)
+        else:
+            return(0)
     
+    def engagement_score(self, likes, dislikes, comment_count, view_count, multiplier=1000):
+        """A score to understand how much the audience engaged with a video. The more likes or dislikes, the higher is the engagement.
+
+        Args:
+            likes (float): Likes
+            dislikes (float): Dislikes
+            view_count (float): Number of views
+            multiplier (int): Multiplier
+        """
+        if(isinstance(likes, str) or isinstance(dislikes, str)):
+            try:
+                likes = int(likes)
+                dislikes = int(likes)
+            except Exception as e:
+                print(e)
+                return(False)
+        if(comment_count < 0):
+            comment_count = 0
+        if(likes < 0):
+            likes = 0
+            dislikes = 0
+        metric = (likes + dislikes + comment_count)/view_count * multiplier
+        return(metric)
+
     def get_duration_in_seconds(self, duration_in_ISO_8601):
         """Returns duration in seconds
 
@@ -54,17 +84,6 @@ class Analyze:
             duration_in_ISO_8601 (str): Duration in ISO 8601
         """
         return(int(isodate.parse_duration(duration_in_ISO_8601).total_seconds()))
-
-    def engagement_score(self, likes, dislikes, comment_count, view_count):
-        """A score to understand how much the audience engaged with a video. The more likes or dislikes, the higher is the engagement.
-
-        Args:
-            likes (float): Likes
-            dislikes (float): Dislikes
-            view_count (float): Number of views
-        """
-        metric = (likes + dislikes + comment_count)/view_count * 1000
-        return(metric)
     
     def splice_by_labels(self, df, list_category, list_theme, *functions):
         """Returns tables per category and theme

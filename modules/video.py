@@ -84,7 +84,7 @@ class Video(Data):
             else:
                 number_of_pages = max_results // api_max_results + 1
 
-        for _ in range(number_of_pages):
+        for i in range(number_of_pages):
             request = self.youtube_obj.commentThreads().list(
                 part="snippet,replies",
                 videoId=video_ID,
@@ -94,7 +94,10 @@ class Video(Data):
                 **kwargs
             )
             response = request.execute()
-            next_page_token = response["nextPageToken"]
+            try:
+                next_page_token = response["nextPageToken"]
+            except Exception:
+                pass
             remaining_results = remaining_results - api_max_results
             list_dict_comment_threads_results.append(response)
         if(save):

@@ -22,7 +22,6 @@ cluster video titles (topic modeling) and see how my labeling went
 Methods
 > Using Google trends, finalized on five search terms related to vaping - "vaping", "electronic cigarette", "vape tricks", "vaping vs smoking" and "vape pen"
 > Ran the Youtube Data API (06/23/2021 4:30 pm) and retrieved 100 video results for each category.
-* New comments dataset was created due to oversight in the code on 08/08/2021 12:52 am
 > 500 videos were reduced to 451 after duplicates were removed.
 > Video information and comment threads for each video (100 for each) were retrieved.
 > Videos were manually categorized into 2 labels - category ("Protective", "Risky", "Neutral") and theme ("Vaping tricks", "Marketing", "Harmful health consequences", "Promotion/Celebration", "Comparative health effects with smoking").
